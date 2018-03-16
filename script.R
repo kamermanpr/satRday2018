@@ -10,6 +10,7 @@
 #             #
 ###############
 # Quick look
+## install.packages('devtools')
 ## devtools::install_github('kamermanpr/carrots')
 library(carrots)
 
@@ -17,16 +18,14 @@ print(carrots)
 
 ###############
 #             #
-#   Slide 5   #
+#   Slide 6   #
 #             #
 ###############
-## Quick look
+## Gather
 library(tidyverse)
 
-## Not shown on slides to reduce slide text
-theme_set(new = theme_grey(base_size = 20))
+theme_set(new = theme_grey(base_size = 20)) # Not shown on slide
 
-## Gather
 carrots_G <- gather(data = carrots,
                     key = "Attribute",
                     value = "Rating",
@@ -34,6 +33,13 @@ carrots_G <- gather(data = carrots,
                     Crispness,
                     Sweetness)
 
+print(carrots_G)
+
+###############
+#             #
+#   Slide 7   #
+#             #
+###############
 ## Plot
 ggplot(data = carrots_G) +
     aes(y = Preference,
@@ -44,7 +50,7 @@ ggplot(data = carrots_G) +
 
 ###############
 #             #
-#   Slide 6   #
+#  Slide 8/9  #
 #             #
 ###############
 # Divide and conquer
@@ -53,7 +59,10 @@ ggplot(data = carrots_G) +
 bolero <- carrots[carrots$Product == 'Bolero', ]
 
 ## Plot
-par(mfcol = c(1, 3))
+par(mfrow = c(3, 1))
+
+par(mar = c(4, 5, 1, 5)) # Not shown on slide
+par(cex = 1) # Not shown on slide
 
 plot(Preference ~ Bitterness, data = bolero)
 lines(loess.smooth(x = bolero$Bitterness,
@@ -67,21 +76,39 @@ plot(Preference ~ Sweetness, data = bolero)
 lines(loess.smooth(x = bolero$Sweetness,
                    y = bolero$Preference))
 
-par(mfcol = c(1, 2))
+par(mfcol = c(1, 1))
 
-###############
-#             #
-#   Slide 8   #
-#             #
-###############
+################
+#              #
+#   Slide 11   #
+#              #
+################
 # Split and apply
 
 ## Split
-foo <- split(x = carrots_G,
-             f = carrots_G$Product)
+foo_list <- split(x = carrots_G,
+                  f = carrots_G$Product)
+
+################
+#              #
+#   Slide 12   #
+#              #
+################
+# Split and apply
+
+lapply(foo_list,
+       head,
+       n = 2)
+
+################
+#              #
+#   Slide 13   #
+#              #
+################
+# Split and apply
 
 ## Apply
-lapply(X = foo,
+lapply(X = foo_list,
        FUN = function(x) {ggplot(data = x) +
            aes(x = Rating,
                y = Preference) +
@@ -91,7 +118,7 @@ lapply(X = foo,
 
 ################
 #              #
-#   Slide 11   #
+#   Slide 17   #
 #              #
 ################
 # Nest and map
@@ -107,11 +134,10 @@ print(foo$data[[1]])
 
 ################
 #              #
-#   Slide 12   #
+#   Slide 20   #
 #              #
 ################
-# Nest and map
-library(magrittr)
+library(magrittr) # Not shown on slide
 
 ## MAP
 foo %<>%
@@ -126,20 +152,20 @@ foo %<>%
                           geom_smooth() +
                           facet_grid(~ Attribute)))
 
-
 print(foo)
 
 ################
 #              #
-#   Slide 13   #
+#   Slide 21   #
 #              #
 ################
 ## Walk
-walk(.x = foo$plot, ~ print(.x))
+walk(.x = foo$plot,
+     ~ print(.x))
 
 ################
 #              #
-#   Slide 14   #
+#   Slide 23   #
 #              #
 ################
 ## MAP2…adding a second variable
@@ -158,18 +184,19 @@ print(foo)
 
 ################
 #              #
-#   Slide 15   #
+#   Slide 24   #
 #              #
 ################
 ## Walk
-walk(.x = foo$plot2, ~ print(.x))
+walk(.x = foo$plot2,
+     ~ print(.x))
 
 ################
 #              #
-#   Slide 16   #
+#   Slide 26   #
 #              #
 ################
-
+## Generate summary stats
 foo %<>%
     mutate(data2 = map(.x = data,
                        ~ .x %>%
@@ -182,12 +209,26 @@ foo %<>%
 
 print(foo)
 
+################
+#              #
+#   Slide 27   #
+#              #
+################
+## Walk
+
+### Note that to get the table in html format, the code needs to be run in an
+### Rmarkdown document.
 walk2(.x = foo$data2,
       .y = as.character(foo$Product),
       ~ print(knitr::kable(x = .x,
                      caption = str_glue("{.y} carrots: median preference"))))
 
-
+################
+#              #
+#   Slide 29   #
+#              #
+################
+## PMAP...getting carried away
 foo %<>%
     mutate(plot3 = pmap(.l = list(data, data2, as.character(Product)),
                         ~ ggplot(data = ..1) +
@@ -201,4 +242,13 @@ foo %<>%
                             labs(title = str_glue("{..3} carrots")) +
                             facet_grid(Attribute ~ Age_group)))
 
-walk(.x = foo$plot3, ~ print(.x))
+print(foo)
+
+################
+#              #
+#   Slide 26   #
+#              #
+################
+## Walk
+walk(.x = foo$plot3,
+     ~ print(.x))
