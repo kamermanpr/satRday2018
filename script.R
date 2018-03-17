@@ -37,19 +37,6 @@ print(carrots_G)
 
 ###############
 #             #
-#   Slide 7   #
-#             #
-###############
-## Plot
-ggplot(data = carrots_G) +
-    aes(y = Preference,
-        x = Product) +
-    geom_jitter(colour = "blue") +
-    geom_boxplot(alpha = 0.8) +
-    facet_grid(Attribute ~ .)
-
-###############
-#             #
 #  Slide 8/9  #
 #             #
 ###############
@@ -211,13 +198,12 @@ print(foo)
 
 ################
 #              #
-#   Slide 27   #
+#     EXTRA    #
 #              #
 ################
-## Walk
+## Generates pretty tables in Rmarkdown docs
 
-### Note that to get the table in html format, the code needs to be run in an
-### Rmarkdown document.
+## Walk
 walk2(.x = foo$data2,
       .y = as.character(foo$Product),
       ~ print(knitr::kable(x = .x,
@@ -225,7 +211,7 @@ walk2(.x = foo$data2,
 
 ################
 #              #
-#   Slide 29   #
+#   Slide 28   #
 #              #
 ################
 ## PMAP...getting carried away
@@ -246,7 +232,7 @@ print(foo)
 
 ################
 #              #
-#   Slide 26   #
+#   Slide 29   #
 #              #
 ################
 ## Walk
